@@ -4,6 +4,86 @@ title: Changelog
 
 This is a list of changes/improvements that were introduced in ProxyManager
 
+## 2.5.0
+This release fixes deprecation warnings that come with the newer PHP 7.4 release,
+and completely covers the test suite with type checks.
+
+With this release, no types coming from ProxyManager should be inferred as mixed anymore,
+allowing for safer, faster and more reliable downstream development.
+
+Total issues resolved: **11**
+
+
+## 2.4.0
+
+This release introduces vimeo/psalm and PHPStorm-specific type-declarations for all API endpoints that do not return simple scalar/object types.
+
+Effectively, that means that following code will now be statically analysable by psalm and PHPStorm, which will know the exact type of `$proxy`:
+```php
+class MyExample
+{
+    public function bar(int $parameter) : void {}
+}
+
+$proxyFactory
+    ->createProxy(MyExample::class)
+    ->bar('hello world!'); // this will be detected as a type mismatch
+```
+In practice, this means that most projects won't need to use explicit inline type-hints such as `/** @var SomeClassName $proxy */`, and the tooling will pick up these types implicitly.
+
+Improvements were also applied to type declarations in generated code, autoloading (now switched to PSR-4) and null-check `??` operator usages.
+
+Total issues resolved: 9
+
+## 2.3.1
+
+This release reverts a BC break that led to fatal errors when
+attempting to load child classes of the proxy generators.
+
+Total issues resolved: **2**
+
+
+## 2.3.0
+
+This release introduces support for PHP 7.4 typed properties, and requires
+a minimum PHP version of 7.4.0 to be installed.
+
+In addition to that, multiple improvements have been done to prepare for
+PHP 8 support, and to reduce the chance of regressions by using stricter
+type checks, testing for mutations, and applying stricter coding style
+rules.
+
+Total issues resolved: **25**
+
+## 2.2.3
+
+This release fixes a bug in `FileWriterGeneratorStrategy` in which permissions were not correctly
+placed on files written to disk, and also ensures that different `$proxyOptions` passed to the
+various proxy factories lead to different proxy class names.
+
+Total issues resolved: **4**
+
+## 2.2.2
+
+This release fixes incorrect passing of variadic method
+parameters to the RPC adapter used by the remote
+object proxies.
+
+Total issues resolved:  **1**
+
+- [434: Fix passing of variadic arguments to RPC adapters in remote object proxies (Backport of #443) thanks to](https://github.com/Ocramius/ProxyManager/pull/434) thanks to @Ocramius
+
+
+## 2.2.1
+
+This release fixes a performance issue in the instantiation of proxies, which
+led to new ReflectionClass instances being produced for every new instance
+of a proxy.
+
+Total issues resolved: **1**
+
+- [420: Use currently unused local $reflection var thanks to](https://github.com/Ocramius/ProxyManager/pull/420) thanks to @nicolas-grekas
+
 ## 2.2.0
 
 This release provides support for the PHP 7.2 `object` type hint, as
